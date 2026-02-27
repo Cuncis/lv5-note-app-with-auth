@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\NoteCategory;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -18,10 +19,11 @@ class NoteFactory extends Factory
     public function definition(): array
     {
         return [
-            'title' => fake()->sentence(rand(3, 8), true),
-            'body' => fake()->paragraphs(rand(1, 3), true),
+            'title'    => fake()->sentence(rand(3, 8), true),
+            'body'     => fake()->paragraphs(rand(1, 3), true),
+            'category' => fake()->randomElement(NoteCategory::cases()),
             'is_pinned' => fake()->boolean(20),
-            'user_id' => User::factory(),
+            'user_id'  => User::factory(),
         ];
     }
 }

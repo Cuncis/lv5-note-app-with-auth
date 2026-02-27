@@ -7,7 +7,14 @@ Usage: @include('notes._card', ['note' => $note])
 
     <div class="flex items-start justify-between gap-3">
         <div class="min-w-0 flex-1">
-            <h3 class="font-semibold text-gray-900 truncate">{{ $note->title }}</h3>
+            <div class="flex items-center gap-2 mb-1">
+                <h3 class="font-semibold text-gray-900 truncate">{{ $note->title }}</h3>
+                @if ($note->category)
+                    <span class="text-xs font-medium px-2 py-0.5 rounded-full {{ $note->category->badgeColor() }}">
+                        {{ $note->category->emoji() }} {{ $note->category->label() }}
+                    </span>
+                @endif
+            </div>
             @if ($note->body)
                 <p class="text-gray-500 text-sm mt-1 line-clamp-2">{{ $note->body }}</p>
             @endif

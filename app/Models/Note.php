@@ -2,16 +2,19 @@
 
 namespace App\Models;
 
+use App\Enums\NoteCategory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Note extends Model
 {
     use HasFactory;
-    protected $fillable = ['title', 'body', 'is_pinned', 'user_id'];
+
+    protected $fillable = ['title', 'body', 'category', 'is_pinned', 'user_id'];
 
     protected $casts = [
         'is_pinned' => 'boolean',
+        'category'  => NoteCategory::class,
     ];
 
     public function user()

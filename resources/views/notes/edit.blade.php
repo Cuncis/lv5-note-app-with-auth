@@ -37,6 +37,25 @@
                 @enderror
             </div>
 
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                    Category <span class="text-red-400">*</span>
+                </label>
+                <select name="category"
+                        class="w-full border rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400
+                               {{ $errors->has('category') ? 'border-red-400 bg-red-50' : 'border-gray-300' }}">
+                    @foreach (\App\Enums\NoteCategory::cases() as $cat)
+                        <option value="{{ $cat->value }}"
+                            {{ old('category', $note->category?->value) === $cat->value ? 'selected' : '' }}>
+                            {{ $cat->emoji() }} {{ $cat->label() }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('category')
+                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
             <div class="flex gap-3">
                 <button type="submit"
                         class="bg-yellow-400 hover:bg-yellow-500 text-yellow-900 font-bold px-6 py-2.5 rounded-lg transition">

@@ -4,13 +4,32 @@
 
 @section('content')
 
-    <div class="mb-8 flex items-end justify-between">
+    <div class="mb-6 flex items-end justify-between">
         <div>
             <h1 class="text-2xl font-bold">My Notes</h1>
             <p class="text-gray-500 text-sm mt-1">
                 {{ $pinned->count() + $unpinned->count() }} note(s)
             </p>
         </div>
+        <a href="{{ route('notes.create') }}"
+            class="bg-yellow-400 hover:bg-yellow-500 text-yellow-900 font-bold px-4 py-2 rounded-lg text-sm transition">
+            + New Note
+        </a>
+    </div>
+
+    {{-- ===== CATEGORY FILTER TABS ===== --}}
+    <div class="flex flex-wrap gap-2 mb-8">
+        <a href="{{ route('notes.index') }}" class="px-4 py-1.5 rounded-full text-sm font-medium transition
+                      {{ !$category ? 'bg-yellow-400 text-yellow-900' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
+            All
+        </a>
+        @foreach ($categories as $cat)
+            <a href="{{ route('notes.index', ['category' => $cat->value]) }}"
+                class="px-4 py-1.5 rounded-full text-sm font-medium transition
+                              {{ $category === $cat->value ? $cat->badgeColor() . ' ring-2 ring-offset-1 ring-current' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
+                {{ $cat->emoji() }} {{ $cat->label() }}
+            </a>
+        @endforeach
     </div>
 
     {{-- ===== PINNED ===== --}}

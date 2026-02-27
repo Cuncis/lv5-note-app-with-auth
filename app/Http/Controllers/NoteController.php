@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\NoteCategory;
 use App\Models\Note;
 use Illuminate\Http\Request;
 
@@ -10,14 +11,23 @@ class NoteController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $user = auth()->user();
+        $user     = auth()->user();
+        $category = $request->query('category');
 
-        $pinned = $user->notes()->pinned()->get();
-        $unpinned = $user->notes()->unpinned()->get();
+        $query = $user->notes();
 
-        return view('notes.index', compact('pinned', 'unpinned'));
+        if ($category && NoteCategory::tryFrom($category)) {
+            $query->where('category', $category);
+        }
+
+        $pinned   = (clone $query)->pinned()->get();
+        $unpinned = (clone $query)->unpinned()->get();
+
+        $categories = NoteCategory::cases();
+
+        return view('notes.index', compact('pinned', 'unpinned', 'categories', 'category'));
     }
 
     /**
@@ -34,8 +44,9 @@ class NoteController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'body' => 'nullable|string',
+            'title'    => 'required|string|max:255',
+            'body'     => 'nullable|string',
+            'category' => 'required|in:personal,work,ideas',
         ]);
 
         auth()->user()->notes()->create($validated);
@@ -61,8 +72,9 @@ class NoteController extends Controller
         $this->authorize('update', $note);
 
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'body' => 'nullable|string',
+            'title'    => 'required|string|max:255',
+            'body'     => 'nullable|string',
+            'category' => 'required|in:personal,work,ideas',
         ]);
 
         $note->update($validated);
