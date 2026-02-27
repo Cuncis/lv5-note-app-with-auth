@@ -19,18 +19,35 @@
 
     {{-- ===== CATEGORY FILTER TABS ===== --}}
     <div class="flex flex-wrap gap-2 mb-8">
-        <a href="{{ route('notes.index') }}" class="px-4 py-1.5 rounded-full text-sm font-medium transition
-                      {{ !$category ? 'bg-yellow-400 text-yellow-900' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
+        <a href="{{ route('notes.index', array_filter(['q' => $q])) }}"
+            class="px-4 py-1.5 rounded-full text-sm font-medium transition
+                          {{ !$category ? 'bg-yellow-400 text-yellow-900' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
             All
         </a>
         @foreach ($categories as $cat)
-            <a href="{{ route('notes.index', ['category' => $cat->value]) }}"
+            <a href="{{ route('notes.index', array_filter(['category' => $cat->value, 'q' => $q])) }}"
                 class="px-4 py-1.5 rounded-full text-sm font-medium transition
-                              {{ $category === $cat->value ? $cat->badgeColor() . ' ring-2 ring-offset-1 ring-current' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
+                                      {{ $category === $cat->value ? $cat->badgeColor() . ' ring-2 ring-offset-1 ring-current' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
                 {{ $cat->emoji() }} {{ $cat->label() }}
             </a>
         @endforeach
     </div>
+
+    {{-- ===== SEARCH ===== --}}
+    <form method="GET" action="{{ route('notes.index') }}" class="mb-8">
+        @if ($category)
+            <input type="hidden" name="category" value="{{ $category }}">
+        @endif
+        <div class="relative">
+            <span class="absolute inset-y-0 left-3 flex items-center text-gray-400">🔍</span>
+            <input type="search" name="q" value="{{ $q }}" placeholder="Search notes..."
+                class="w-full border border-gray-300 rounded-lg pl-9 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400">
+            @if ($q)
+                <a href="{{ route('notes.index', array_filter(['category' => $category])) }}"
+                    class="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-gray-600 text-lg">&times;</a>
+            @endif
+        </div>
+    </form>
 
     {{-- ===== PINNED ===== --}}
     @if ($pinned->count())

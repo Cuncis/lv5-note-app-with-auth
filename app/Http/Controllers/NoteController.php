@@ -15,6 +15,7 @@ class NoteController extends Controller
     {
         $user     = auth()->user();
         $category = $request->query('category');
+        $q        = trim($request->query('q', ''));
 
         $query = $user->notes();
 
@@ -22,12 +23,19 @@ class NoteController extends Controller
             $query->where('category', $category);
         }
 
+        if ($q !== '') {
+            $query->where(function ($sub) use ($q) {
+                $sub->where('title', 'like', "%{$q}%")
+                    ->orWhere('body', 'like', "%{$q}%");
+            });
+        }
+
         $pinned   = (clone $query)->pinned()->get();
         $unpinned = (clone $query)->unpinned()->get();
 
         $categories = NoteCategory::cases();
 
-        return view('notes.index', compact('pinned', 'unpinned', 'categories', 'category'));
+        return view('notes.index', compact('pinned', 'unpinned', 'categories', 'category', 'q'));
     }
 
     /**
